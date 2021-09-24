@@ -13,6 +13,12 @@ public class FareCalculatorService {
         }
 
         Duration duration = Duration.between(ticket.getInTime(), ticket.getOutTime());
+         
+        //free if stayed for under 30 minutes
+        if (duration.toMinutes() < 30 ) {
+        	return;
+        }
+        
         float nbHours = new Float(duration.toMinutes()) /60;
         
         switch (ticket.getParkingSpot().getParkingType()){
