@@ -45,10 +45,14 @@ public class ParkingDataBaseIT {
         ticketDAO = new TicketDAO();
         ticketDAO.dataBaseConfig = dataBaseTestConfig;
         dataBasePrepareService = new DataBasePrepareService();
+        dataBasePrepareService.clearDataBaseEntries();
     }
 
     @Test
-    public void testParkingACar(){
+    public void testParkingACar() throws Exception{
+    	when(inputReaderUtil.readSelection()).thenReturn(1);
+    	when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+        
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         parkingService.processIncomingVehicle();
         
@@ -62,11 +66,12 @@ public class ParkingDataBaseIT {
         int nbSlot = parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR);
         
         //check non dispo
-        assertEquals(nbSlot, 2);
+        assertEquals(2, nbSlot);
     }
 
     @Test
     public void testParkingLotExit() throws Exception{
+    	when(inputReaderUtil.readSelection()).thenReturn(1);
     	when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
         
     	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
@@ -94,18 +99,22 @@ public class ParkingDataBaseIT {
         
         Ticket firstTicket = ticketDAO.getTicket("ABCDEF");
         firstTicket.setInTime(LocalDateTime.now().minusMinutes(29));
+        firstTicket.setOutTime(LocalDateTime.now());
         ticketDAO.updateTicket(firstTicket);
         
         parkingService.processExitingVehicle();
         
         //check is free for first 30 minutes
         Ticket ticket = ticketDAO.getTicket("ABCDEF");
-        assertEquals(ticket.getPrice(), 0D);
+        assertEquals(0D, ticket.getPrice());
     }
     
 
     @Test
-    public void testPayedAfter30minParking(){
+    public void testPayedAfter30minParking() throws Exception{
+    	when(inputReaderUtil.readSelection()).thenReturn(1);
+        when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+        
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         
         parkingService.processIncomingVehicle();
@@ -144,7 +153,7 @@ public class ParkingDataBaseIT {
         parkingService.processExitingVehicle();
         secoundTicket = ticketDAO.getTicket("ABCDEF");
         
-        assertEquals(secoundTicket.getPrice(), firstTicket.getPrice() - Fare.DISCOUNT * firstTicket.getPrice() );
+        assertEquals(firstTicket.getPrice() - Fare.DISCOUNT * firstTicket.getPrice(), secoundTicket.getPrice());
     }
 
 
