@@ -1,45 +1,49 @@
 package com.parkit.parkingsystem.service;
 
-import com.parkit.parkingsystem.constants.ParkingType;
-import com.parkit.parkingsystem.dao.ParkingSpotDAO;
-import com.parkit.parkingsystem.dao.TicketDAO;
-import com.parkit.parkingsystem.model.ParkingSpot;
-import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.util.InputReaderUtil;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.time.LocalDateTime;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.*;
+import com.parkit.parkingsystem.constants.ParkingType;
+import com.parkit.parkingsystem.dao.ParkingSpotDAO;
+import com.parkit.parkingsystem.dao.TicketDAO;
+import com.parkit.parkingsystem.model.ParkingSpot;
+import com.parkit.parkingsystem.model.Ticket;
+import com.parkit.parkingsystem.util.InputReaderUtil;
 
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
-    private static ParkingService parkingService;
+    private ParkingService parkingService;
 
     @Mock
-    private static InputReaderUtil inputReaderUtil;
+    private InputReaderUtil inputReaderUtil;
     @Mock
-    private static ParkingSpotDAO parkingSpotDAO;
+    private ParkingSpotDAO parkingSpotDAO;
     @Mock
-    private static TicketDAO ticketDAO;
+    private TicketDAO ticketDAO;
     
+    @Mock
+    private FareCalculatorService fareCalculatorService;
     
     @BeforeEach
 	private void setUpPerTest() {
-	    try {
-	    	parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-	    	//mockStatic(ParkingService.class).
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        throw  new RuntimeException("Failed to set up test mock objects");
-	    }
+	   	parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+	   	ReflectionTestUtils.setField(parkingService, "fareCalculatorService", fareCalculatorService);
+	   	    
 	}
 
     @Test
@@ -82,7 +86,8 @@ public class ParkingServiceTest {
     	when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
     	    	
     	ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
-        verify(parkingSpotDAO, Mockito.times(1)).getNextAvailableSlot(any(ParkingType.class));
+        
+    	verify(parkingSpotDAO, Mockito.times(1)).getNextAvailableSlot(any(ParkingType.class));
         assertEquals(parkingSpot.getParkingType(), ParkingType.BIKE);
         assertEquals(parkingSpot.isAvailable(), true);
         
@@ -92,7 +97,9 @@ public class ParkingServiceTest {
     public void getNextParkingNumberIfAvailableForIncorrectSelection(){
 
     	when(inputReaderUtil.readSelection()).thenReturn(0);
+    	
     	ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();		
+    	
     	assertNull(parkingSpot);
         
     }
@@ -104,6 +111,7 @@ public class ParkingServiceTest {
     	when(parkingSpotDAO.getNextAvailableSlot(any(ParkingType.class))).thenReturn(1);
     	
         parkingService.processIncomingVehicle();
+        
         verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
         verify(ticketDAO, Mockito.times(1)).saveTicket(any(Ticket.class));
     }

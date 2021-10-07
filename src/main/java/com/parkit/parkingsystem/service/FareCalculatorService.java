@@ -9,8 +9,10 @@ public class FareCalculatorService {
 
     private static final int firstFreeMinutes = 30;
     private static final double discountForRecurringUsers = 0.5;
+    
+    public FareCalculatorService() {}
 
-	public void calculateFare(Ticket ticket){
+    public void calculateFare(Ticket ticket){
         if( (ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
         }

@@ -1,8 +1,6 @@
 package com.parkit.parkingsystem.model;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
 
 public class Ticket {
     private int id;
@@ -11,7 +9,8 @@ public class Ticket {
     private double price;
     private LocalDateTime inTime;
     private LocalDateTime outTime;
-
+    private boolean haveRecurringUser = false;
+    
     public int getId() {
         return id;
     }
@@ -58,5 +57,14 @@ public class Ticket {
 
     public void setOutTime(LocalDateTime outTime) {
         this.outTime = outTime;
+    }
+
+
+    public boolean getHaveRecurringUser() {
+        return this.haveRecurringUser;
+    }
+
+    public void setHaveRecurringUser(boolean haveRecurringUser) {
+        this.haveRecurringUser = haveRecurringUser;
     }
 }
