@@ -80,6 +80,9 @@ public class ParkingDataBaseIT {
         //check that a ticket is actualy saved in DB
         Ticket ticket = ticketDAO.getTicket("ABCDEF");
         assertNotNull(ticket);
+       
+        //wait for test check outtime after inTime
+        Thread.sleep(200);
         
         parkingService.processExitingVehicle();
 
