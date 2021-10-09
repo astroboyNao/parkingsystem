@@ -50,7 +50,6 @@ public class ParkingSpotDAO {
             return (updateRowCount == 1);
         }catch (Exception ex){
             logger.error("Error updating parking info",ex);
-            new RuntimeException(ex);
         }finally {
             dataBaseConfig.closeConnection(con);
         }
