@@ -43,7 +43,7 @@ public class FareCalculatorService {
 
 	//When the user exits the parking garage, they will benefit from a 5% discount on the normal fee
 	private double getDiscount(Ticket ticket) {
-		return (ticket.getId() > 0 ) ? discountForRecurringUsers : 0;
+		return (ticket.getHaveRecurringUser()) ? discountForRecurringUsers : 0;
 	}
 
     //free if stayed for under 30 minutes
