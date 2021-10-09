@@ -120,6 +120,7 @@ public class ParkingDataBaseIT {
         parkingService.processIncomingVehicle();
         
         Ticket firstTicket = ticketDAO.getTicket("ABCDEF");
+        firstTicket.setHaveRecurringUser(false);
         firstTicket.setInTime(LocalDateTime.now().minusMinutes(30));
         ticketDAO.updateTicket(firstTicket);
         

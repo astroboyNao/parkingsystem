@@ -178,7 +178,7 @@ public class FareCalculatorServiceTest {
 	    ticket.setInTime(inTime);
 	    ticket.setOutTime(outTime);
 	    ticket.setParkingSpot(parkingSpot);
-
+	    ticket.setHaveRecurringUser(true);
         fareCalculatorService.calculateFare(ticket);
         
         assertEquals( (1 * ( Fare.BIKE_RATE_PER_HOUR - Fare.DISCOUNT )) , ticket.getPrice());
@@ -195,7 +195,7 @@ public class FareCalculatorServiceTest {
 	    ticket.setInTime(inTime);
 	    ticket.setOutTime(outTime);
 	    ticket.setParkingSpot(parkingSpot);
-
+	    ticket.setHaveRecurringUser(true);
         fareCalculatorService.calculateFare(ticket);
         
         assertEquals( (1 * ( Fare.CAR_RATE_PER_HOUR - Fare.DISCOUNT )) , ticket.getPrice());
